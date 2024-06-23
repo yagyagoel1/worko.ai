@@ -93,4 +93,19 @@ const updateUserFields = asyncHandler(async (req, res) => {
     const updatedUser = await updateUserById(id, { name: data.name, age: data.age, city: data.city, zipCode: data.zipCode });
     res.status(200).json(new ApiResponse(200, "user updated successfully", updatedUser));
 });
-export { registerUser, loginUser, getAllUsers, getUser, updateUser, updateUserFields }
+const deleteUser = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const validate = validategetUser({ id });
+    if (validate.error) {
+        return res.status(400).json(new ApiError(400, validate.error.details[0].message));
+    }
+    const userExists = await findUserById(id);
+    if (!userExists) {
+        return res.status(404).json(new ApiError(404, "user not found"));
+    }
+    const user = await deleteUserById(id);
+
+    res.status(200).json(new ApiResponse(200, "user deleted successfully"));
+});
+
+export { registerUser, loginUser, getAllUsers, getUser, updateUser, updateUserFields, deleteUser }
