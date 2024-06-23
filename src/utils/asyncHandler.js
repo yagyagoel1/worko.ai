@@ -10,3 +10,4 @@ const asyncHandler = (fn) =>async (req, res, next) =>
         console.log("error while processing request",error);
     }
 }
+export default asyncHandler;
