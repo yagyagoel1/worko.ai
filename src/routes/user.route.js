@@ -7,8 +7,13 @@ import { createUser } from '../Database/user.database';
 
 
 
-const router =express.Router();
+const router = express.Router();
 router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
-router.route("/").get(verifyUser,getAllUsers).post(createUser);
-router.route("/:userId").get(verifyUser,getUser);
+router.route("/").get(verifyUser, getAllUsers).post(createUser);
+router.route("/:userId")
+    .get(verifyUser, getUser)
+    .put(verifyUser, updateUser)
+    .patch(verifyUser, updateUserFields)
+    .delete(verifyUser, deleteUser);
+export default router;
