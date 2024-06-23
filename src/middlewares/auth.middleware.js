@@ -1,4 +1,5 @@
-import ApiResponse from "../utils/ApiResponse";
+import { findUserById } from "../Database/user.database";
+import ApiError from "../utils/ApiError.js";
 import asyncHandler from "../utils/asyncHandler";
 
 const verifyUser = asyncHandler(async (req, res, next) => {
@@ -11,7 +12,7 @@ const verifyUser = asyncHandler(async (req, res, next) => {
         return res.status(401).json(new ApiError(401,"unauthorized"));
     }
     const userExists = await findUserById(user._id);
-    if(!userExists){
+    if(!userExists || userExists.token !== token){
         return res.status(401).json(new ApiError(401,"unauthorized"));
     }
     req.user = {id:user._id,email:user.email};

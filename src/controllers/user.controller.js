@@ -1,7 +1,7 @@
-import { getUserByEmail } from "../Database/user.database";
+import { getUserByEmail, getUsers } from "../Database/user.database";
 import ApiResponse from "../utils/ApiResponse";
 import asyncHandler from "../utils/asyncHandler";
-import { validateLoginUser, validateRegisterUser } from "../validations/user.validation";
+import { validateLoginUser, validateRegisterUser, validategetAllUsers } from "../validations/user.validation";
 
 const registerUser = asyncHandler(async (req, res) => {
 const {email,name,age,password,city,zipCode} = req.body;
@@ -39,6 +39,17 @@ const loginUser = asyncHandler(async (req, res) => {
     }).json(new ApiResponse(200, "login successful"));
 });
 
+const getAllUsers = asyncHandler(async (req, res) => {
+
+    const {page}=  req.query;
+    const validate= validategetAllUsers({page});
+    if(validate.error){
+        return res.status(400).json(new ApiError(400,validate.error.details[0].message));
+    }
+
+    const users = await getUsers(page);
+    res.status(200).json(new ApiResponse(200,"users fetched successfully",users));
+  });
 
 
-export {registerUser,loginUser}
+export {registerUser,loginUser,getAllUsers}

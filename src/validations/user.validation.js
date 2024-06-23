@@ -18,3 +18,9 @@ export const validateLoginUser = (data) => {
     });
     return schema.validate(data);
 }   
+export const validategetAllUsers = (data) => {
+    const schema = Joi.object({
+        page: Joi.number().required()
+    });
+    return schema.validate(data);
+}
