@@ -1,5 +1,5 @@
 import express from 'express'
-import { getAllUsers, getUser, loginUser, registerUser } from '../controllers/user.controller';
+import { getAllUsers, getUser, loginUser, registerUser, updateUser } from '../controllers/user.controller';
 import verifyUser from '../middlewares/auth.middleware';
 import { createUser } from '../Database/user.database';
 

@@ -41,3 +41,13 @@ export const validateUpdateUser = (data) => {
     });
     return schema.validate(data);
 }
+export const validateUpdateUserFields = (data) => {
+    const schema = Joi.object({
+        id: Joi.string().required(),
+        name: Joi.string(),
+        age: Joi.number(),
+        city: Joi.string(),
+        zipCode: Joi.string().length(6)
+    });
+    return schema.validate(data);
+};

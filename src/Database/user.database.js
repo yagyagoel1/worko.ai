@@ -16,3 +16,6 @@ export const getUsers = async (page) => {
 export const updateUserById = async (id, data) => {
     return await User.findByIdAndUpdate(id, { ...data }, { new: true }).select("-password -token -isDeleted -createdAt -updatedAt");
 }
+export const deleteUserById = async (id) => {
+    return await User.findByIdAndUpdate(id, { isDeleted: true }, { new: true }).select("-password -token -createdAt -updatedAt");
+}

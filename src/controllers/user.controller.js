@@ -1,7 +1,7 @@
-import { findUserById, getUserByEmail, getUsers, updateUserById } from "../Database/user.database";
+import { deleteUserById, findUserById, getUserByEmail, getUsers, updateUserById } from "../Database/user.database";
 import ApiResponse from "../utils/ApiResponse";
 import asyncHandler from "../utils/asyncHandler";
-import { validateLoginUser, validateRegisterUser, validateUpdateUser, validategetAllUsers, validategetUser } from "../validations/user.validation";
+import { validateLoginUser, validateRegisterUser, validateUpdateUser, validateUpdateUserFields, validategetAllUsers, validategetUser } from "../validations/user.validation";
 
 const registerUser = asyncHandler(async (req, res) => {
     const { email, name, age, password, city, zipCode } = req.body;
@@ -79,5 +79,18 @@ const updateUser = asyncHandler(async (req, res) => {
 
     res.status(200).json(new ApiResponse(200, "user updated successfully", updatedUser));
 });
-
-export { registerUser, loginUser, getAllUsers, getUser, updateUser }
+const updateUserFields = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const data = req.body;
+    const validate = validateUpdateUserFields({ id, ...data })
+    if (validate.error) {
+        return res.status(400).json(new ApiError(400, validate.error.details[0].message));
+    }
+    const user = await findUserById(id);
+    if (!user) {
+        return res.status(404).json(new ApiError(404, "user not found"));
+    }
+    const updatedUser = await updateUserById(id, { name: data.name, age: data.age, city: data.city, zipCode: data.zipCode });
+    res.status(200).json(new ApiResponse(200, "user updated successfully", updatedUser));
+});
+export { registerUser, loginUser, getAllUsers, getUser, updateUser, updateUserFields }
