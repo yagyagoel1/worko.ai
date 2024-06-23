@@ -131,4 +131,10 @@ const updateUserPassword = asyncHandler(async (req, res) => {
     const passwordChanged = await changeUserPasswordById(req.user.id, newPassword);
     res.status(200).json(new ApiResponse(200, "password updated successfully"));
 });
-export { registerUser, loginUser, getAllUsers, getUser, updateUser, updateUserFields, deleteUser, updateUserPassword }
+const logoutUser = asyncHandler(async (req, res) => {
+    const id = req.user.id;
+    const user = await updateUserById(id, { token: "" });
+    res.clearCookie("token").json(new ApiResponse(200, "logout successful"));
+});
+
+export { registerUser, loginUser, getAllUsers, getUser, updateUser, updateUserFields, deleteUser, updateUserPassword, logoutUser }
