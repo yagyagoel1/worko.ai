@@ -1,7 +1,7 @@
-import { deleteUserById, findUserById, getUserByEmail, getUsers, updateUserById } from "../Database/user.database";
+import { changeUserPasswordById, deleteUserById, findUserById, getUserByEmail, getUsers, updateUserById } from "../Database/user.database";
 import ApiResponse from "../utils/ApiResponse";
 import asyncHandler from "../utils/asyncHandler";
-import { validateLoginUser, validateRegisterUser, validateUpdateUser, validateUpdateUserFields, validategetAllUsers, validategetUser } from "../validations/user.validation";
+import { validateLoginUser, validateRegisterUser, validateUpdatePassword, validateUpdateUser, validateUpdateUserFields, validategetAllUsers, validategetUser } from "../validations/user.validation";
 
 const registerUser = asyncHandler(async (req, res) => {
     const { email, name, age, password, city, zipCode } = req.body;
@@ -52,6 +52,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 });
 const getUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
+
     const validate = validategetUser({ id });
     if (validate.error) {
         return res.status(400).json(new ApiError(400, validate.error.details[0].message));
@@ -66,6 +67,9 @@ const getUser = asyncHandler(async (req, res) => {
 })
 const updateUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
+    if (id !== req.user.id) {
+        return res.status(401).json(new ApiError(401, "unauthorized"));
+    }
     const { name, age, city, zipCode } = req.body;
     const validate = validateUpdateUser({ id, name, age, city, zipCode });
     if (validate.error) {
@@ -81,6 +85,9 @@ const updateUser = asyncHandler(async (req, res) => {
 });
 const updateUserFields = asyncHandler(async (req, res) => {
     const { id } = req.params;
+    if (id !== req.user.id) {
+        return res.status(401).json(new ApiError(401, "unauthorized"));
+    }
     const data = req.body;
     const validate = validateUpdateUserFields({ id, ...data })
     if (validate.error) {
@@ -95,6 +102,9 @@ const updateUserFields = asyncHandler(async (req, res) => {
 });
 const deleteUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
+    if (id !== req.user.id) {
+        return res.status(401).json(new ApiError(401, "unauthorized"));
+    }
     const validate = validategetUser({ id });
     if (validate.error) {
         return res.status(400).json(new ApiError(400, validate.error.details[0].message));
@@ -107,5 +117,18 @@ const deleteUser = asyncHandler(async (req, res) => {
 
     res.status(200).json(new ApiResponse(200, "user deleted successfully"));
 });
+const updateUserPassword = asyncHandler(async (req, res) => {
 
-export { registerUser, loginUser, getAllUsers, getUser, updateUser, updateUserFields, deleteUser }
+    const { newPassword } = req.body;
+    const validate = validateUpdatePassword({ newPassword });
+    if (validate.error) {
+        return res.status(400).json(new ApiError(400, validate.error.details[0].message));
+    }
+    const user = await findUserById(req.user.id);
+    if (!user) {
+        return res.status(404).json(new ApiError(404, "user not found"));
+    }
+    const passwordChanged = await changeUserPasswordById(req.user.id, newPassword);
+    res.status(200).json(new ApiResponse(200, "password updated successfully"));
+});
+export { registerUser, loginUser, getAllUsers, getUser, updateUser, updateUserFields, deleteUser, updateUserPassword }

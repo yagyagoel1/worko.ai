@@ -51,3 +51,10 @@ export const validateUpdateUserFields = (data) => {
     });
     return schema.validate(data);
 };
+export const validateUpdatePassword = (data) => {
+    const schema = Joi.object({
+
+        newPassword: Joi.string().min(6).required()
+    });
+    return schema.validate(data);
+}

@@ -1,5 +1,5 @@
 import express from 'express'
-import { getAllUsers, getUser, loginUser, registerUser, updateUser } from '../controllers/user.controller';
+import { deleteUser, getAllUsers, getUser, loginUser, registerUser, updateUser, updateUserFields } from '../controllers/user.controller';
 import verifyUser from '../middlewares/auth.middleware';
 import { createUser } from '../Database/user.database';
 
@@ -16,4 +16,5 @@ router.route("/:userId")
     .put(verifyUser, updateUser)
     .patch(verifyUser, updateUserFields)
     .delete(verifyUser, deleteUser);
+router
 export default router;
