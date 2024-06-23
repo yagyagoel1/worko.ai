@@ -1,7 +1,7 @@
 import { getUserByEmail, getUsers } from "../Database/user.database";
 import ApiResponse from "../utils/ApiResponse";
 import asyncHandler from "../utils/asyncHandler";
-import { validateLoginUser, validateRegisterUser, validategetAllUsers } from "../validations/user.validation";
+import { validateLoginUser, validateRegisterUser, validategetAllUsers, validategetUser } from "../validations/user.validation";
 
 const registerUser = asyncHandler(async (req, res) => {
 const {email,name,age,password,city,zipCode} = req.body;
@@ -50,6 +50,20 @@ const getAllUsers = asyncHandler(async (req, res) => {
     const users = await getUsers(page);
     res.status(200).json(new ApiResponse(200,"users fetched successfully",users));
   });
+const getUser =  asyncHandler(async (req,res)=>{
+    const {id} = req.params;    
+    const validate = validategetUser({id});
+    if(validate.error){
+        return res.status(400).json(new ApiError(400,validate.error.details[0].message));
+    }
+    const user = await findUserById(id);
+    if(!user){
+        return res.status(404).json(new ApiError(404,"user not found"));
+    }
 
 
-export {registerUser,loginUser,getAllUsers}
+    res.status(200).json(new ApiResponse(200,"user fetched successfully",{id:user._id ,email:user.email,name:user.name,age:user.age,city:user.city,zipCode:user.zipCode}));
+})
+
+
+export {registerUser,loginUser,getAllUsers,getUser}

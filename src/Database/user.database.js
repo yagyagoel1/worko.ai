@@ -11,5 +11,5 @@ export const findUserById = async (id) => {
     return await User.findById(id).where({isDeleted:false});
 }
 export const getUsers = async (page) => {
-    return await User.find({isDeleted:false}).skip((page-1)*10).limit(10);
+    return await User.find({isDeleted:false}).skip((page-1)*10).limit(10).select("-password -token -isDeleted -createdAt -updatedAt");
 }

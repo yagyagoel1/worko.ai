@@ -24,3 +24,9 @@ export const validategetAllUsers = (data) => {
     });
     return schema.validate(data);
 }
+export const validategetUser = (data) => {
+    const schema = Joi.object({
+        id: Joi.string().required()
+    });
+    return schema.validate(data);
+}
