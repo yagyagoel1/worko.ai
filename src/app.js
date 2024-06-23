@@ -28,14 +28,18 @@ app.use(express.json({ limit: "50kb" }));
 app.use(express.urlencoded({ extended: true, limit: "50kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
-
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({ error: 'Invalid JSON payload' });
+  }
+  next();
+});
 //health check route
 app.get(
   "/",
-  asyncHandler((req, res) => {
+  (req, res) => {
     res.status(200).json({ message: "Is Healthy" });
-  })
-);
+  });
 
 import workoRouter from "./routes/index.route.js";
 app.use("/worko", workoRouter);
